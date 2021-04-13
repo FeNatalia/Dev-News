@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,6 +31,15 @@ public class TopicController {
     public void deleteTopic(@PathVariable Long topicId) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(ResourceNotFoundException::new);
         topicRepository.delete(topic);
+    }
+
+    //Updates the given topic
+    @PutMapping("topics/{topicId}")
+    public ResponseEntity<Topic> updateTopic(@PathVariable Long topicId, @Valid @RequestBody Topic updatedTopic) {
+        Topic topic = topicRepository.findById(topicId).orElseThrow(ResourceNotFoundException::new);
+        updatedTopic.setId(topicId);
+        topicRepository.save(updatedTopic);
+        return ResponseEntity.ok(updatedTopic);
     }
 
     //Returns all topics
