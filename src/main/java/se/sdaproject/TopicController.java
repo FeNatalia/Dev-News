@@ -17,11 +17,19 @@ public class TopicController {
         this.articleRepository = articleRepository;
     }
 
-    //Create a topic
+    //Creates a topic
     @PostMapping("topics")
     public ResponseEntity<Topic> createTopic(@RequestBody Topic topic) {
         topicRepository.save(topic);
         return ResponseEntity.status(HttpStatus.CREATED).body(topic);
+    }
+
+    //Deletes the given topic
+    @DeleteMapping("topics/{topicId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTopic(@PathVariable Long topicId) {
+        Topic topic = topicRepository.findById(topicId).orElseThrow(ResourceNotFoundException::new);
+        topicRepository.delete(topic);
     }
 
     //Returns all topics
@@ -31,7 +39,7 @@ public class TopicController {
         return topics;
     }
 
-    //Tag a topic into a given article
+    //Associates the given topic by topicId with the article given by articleId.
     @PostMapping("topics/{topicId}/articles/{articleId}")
     public ResponseEntity<Topic> createTag(@PathVariable Long topicId, @PathVariable Long articleId) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(ResourceNotFoundException::new);
@@ -39,5 +47,27 @@ public class TopicController {
         topic.getTags().add(article);
         topicRepository.save(topic);
         return ResponseEntity.status(HttpStatus.CREATED).body(topic);
+    }
+
+    //Returns all articles associated with the topic given by topicId
+    @GetMapping("topics/{topicId}/articles")
+    public ResponseEntity<List<Article>> listTopicArticles(@PathVariable Long topicId) {
+        Topic topic = topicRepository.findById(topicId).orElseThrow(ResourceNotFoundException::new);
+        List<Article> tags = topic.getTags();
+        return ResponseEntity.ok(tags);
+    }
+
+    //Deletes the association of a topic for the given article. The topic and article themselves remain.
+    @DeleteMapping("articles/{articleId}/topics/{topicId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTag(@PathVariable Long topicId, @PathVariable Long articleId) {
+        Topic topic = topicRepository.findById(topicId).orElseThrow(ResourceNotFoundException::new);
+        Article article = articleRepository.findById(articleId).orElseThrow(ResourceNotFoundException::new);
+        if (topic.getTags().contains(article)) {
+            topic.getTags().remove(article);
+            topicRepository.save(topic);
+        } else {
+            throw new ResourceNotFoundException();
+        }
     }
 }
