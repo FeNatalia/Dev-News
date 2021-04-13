@@ -2,10 +2,9 @@ package se.sdaproject;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class TopicController {
@@ -23,6 +22,13 @@ public class TopicController {
     public ResponseEntity<Topic> createTopic(@RequestBody Topic topic) {
         topicRepository.save(topic);
         return ResponseEntity.status(HttpStatus.CREATED).body(topic);
+    }
+
+    //Returns all topics
+    @GetMapping("topics")
+    public List<Topic> listAllTopics(){
+        List <Topic> topics = topicRepository.findAll();
+        return topics;
     }
 
     //Tag a topic into a given article
