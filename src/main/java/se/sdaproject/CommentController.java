@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class CommentController {
@@ -37,10 +38,20 @@ public class CommentController {
     }
 
     //Deletes the given comment
-//    @DeleteMapping("/comments/{id}")
-//    public ResponseEntity<Comment> deleteComment(@PathVariable Long id) {
-//        Comment comment = commentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-//        commentRepository.delete(comment);
-//        return ResponseEntity.ok(comment);
-//    }
+    @DeleteMapping("/comments/{id}")
+    public ResponseEntity<Comment> deleteComment(@PathVariable Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        commentRepository.delete(comment);
+        return ResponseEntity.ok(comment);
+    }
+
+    //Returns all comments on article given by articleId
+    @GetMapping("/articles/{articleId}/comments")
+    public ResponseEntity<Article> listAllComments(@PathVariable Long articleId){
+        Article article = articleRepository.findById(articleId).orElseThrow(ResourceNotFoundException::new);
+        return ResponseEntity.ok(article);
+    }
+
+
+
 }
