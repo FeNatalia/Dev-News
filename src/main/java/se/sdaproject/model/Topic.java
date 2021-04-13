@@ -1,4 +1,4 @@
-package se.sdaproject;
+package se.sdaproject.model;
 
 import javax.persistence.*;
 import java.util.List;
